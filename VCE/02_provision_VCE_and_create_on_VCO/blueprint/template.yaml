@@ -1,0 +1,99 @@
+version: 1
+inputs:
+  host:
+    type: string
+    encrypted: false
+    description: VCO IP or Hostname
+    default: vco22-fra1.velocloud.net
+    title: VCO Host
+  code:
+    type: string
+    encrypted: false
+    description: Activation code on VCO
+    title: Activation Code
+    default: GENERATE
+  password:
+    type: string
+    encrypted: true
+    title: Password on vVCE
+    description: Password for vVCE to access via ssh
+    default: Velocloud123
+resources:
+  vVCE:
+    type: Cloud.vSphere.Machine
+    properties:
+      ovfProperties:
+        - key: password
+          value: '${input.password}'
+        - key: velocloud.vce.activation_code
+          value: '${input.code}'
+        - key: velocloud.vce.dns1
+          value: 8.8.8.8
+        - key: velocloud.vce.dns2
+          value: 8.8.4.4
+        - key: velocloud.vce.vco
+          value: '${input.host}'
+      cpuCount: 2
+      totalMemoryMB: 4096
+      imageRef: 'http://192.168.2.175/edge-VC_VMDK-x86_64-3.4.0-106-R340-20200218-GA-c57f8316dd-updatable-ext4.ova'
+      networks:
+        - name: '${resource.Cloud_Network_1.name}'
+          network: '${resource.Cloud_Network_1.id}'
+          deviceIndex: 0
+        - name: '${resource.Cloud_Network_2.name}'
+          network: '${resource.Cloud_Network_2.id}'
+          deviceIndex: 1
+        - name: '${resource.Cloud_Network_3.name}'
+          network: '${resource.Cloud_Network_3.id}'
+          deviceIndex: 2
+        - name: '${resource.Cloud_Network_4.name}'
+          network: '${resource.Cloud_Network_4.id}'
+          deviceIndex: 3
+        - name: '${resource.Cloud_Network_5.name}'
+          network: '${resource.Cloud_Network_5.id}'
+          deviceIndex: 4
+        - name: '${resource.Cloud_Network_6.name}'
+          network: '${resource.Cloud_Network_6.id}'
+          deviceIndex: 5
+  Cloud_Network_1:
+    type: Cloud.Network
+    properties:
+      name: GE1
+      networkType: existing
+      constraints:
+        - tag: 'network:block'
+  Cloud_Network_2:
+    type: Cloud.Network
+    properties:
+      name: GE2
+      networkType: existing
+      constraints:
+        - tag: 'network:lablan1'
+  Cloud_Network_3:
+    type: Cloud.Network
+    properties:
+      name: GE3
+      networkType: existing
+      constraints:
+        - tag: 'network:realwan1'
+  Cloud_Network_4:
+    type: Cloud.Network
+    properties:
+      name: GE4
+      networkType: existing
+      constraints:
+        - tag: 'network:realwan2'
+  Cloud_Network_5:
+    type: Cloud.Network
+    properties:
+      name: GE5
+      networkType: existing
+      constraints:
+        - tag: 'network:block'
+  Cloud_Network_6:
+    type: Cloud.Network
+    properties:
+      name: GE6
+      networkType: existing
+      constraints:
+        - tag: 'network:block'

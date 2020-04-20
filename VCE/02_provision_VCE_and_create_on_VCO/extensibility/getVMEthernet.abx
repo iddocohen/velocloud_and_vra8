@@ -1,0 +1,15 @@
+---
+exportVersion: "1"
+exportId: "8a7480b5710dcc1c017110aac8f70077"
+name: "getVMEthernet"
+runtime: "python"
+entrypoint: "handler"
+timeoutSeconds: 180
+deploymentTimeoutSeconds: 600
+dependencies: "requests"
+actionType: "SCRIPT"
+configuration:
+  const-providers:
+  - ""
+  const_azure-system_managed_identity: false
+memoryInMB: 150

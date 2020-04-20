@@ -1,0 +1,17 @@
+---
+version: 1
+flow:
+  flow_start:
+    next: action1
+  action1:
+    action: getVcToken
+    next: action2
+  action2:
+    action: getVMids
+    next: action3
+  action3:
+    action: getVMEthernet
+    next: action4
+  action4:
+    action: setVMEthernet
+    next: flow_end

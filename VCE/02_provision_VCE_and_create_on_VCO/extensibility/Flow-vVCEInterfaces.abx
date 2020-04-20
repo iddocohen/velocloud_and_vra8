@@ -1,0 +1,10 @@
+---
+exportVersion: "1"
+exportId: "8a7480b5710dcc1c01710e062ff30031"
+name: "Flow-vVCEInterfaces"
+inputs:
+  base64cred: ""
+  vcenterhost: ""
+timeoutSeconds: 600
+actionType: "FLOW"
+memoryInMB: 150

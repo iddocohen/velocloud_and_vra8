@@ -1,0 +1,13 @@
+---
+exportVersion: "1"
+exportId: "8a7480b5710dcc1c01711be85a3d03c2"
+name: "Flow-vVCEcreationOnVCO"
+inputs:
+  VCOpass: ""
+  VCOuser: ""
+  VCOenterid: 507 
+  VCOenterproxyid: 23
+  VCOconfigurationid: 7737
+timeoutSeconds: 600
+actionType: "FLOW"
+memoryInMB: 150
