@@ -72,8 +72,16 @@ For more information on how inputs can be customised please refer to [How user i
 
 ## Resources Section in YAML
 
-### Compute
-### Network
+The resource section gives one the possiblity to define the compute resources, the networks they should use and the connections between resources and the defined networks, vRA8 should provision and configure. In this template, I defined a compute resource called `vVCE` which is a `type: Cloud.vSphere.Machine` onto which I will connect 6 interfaces to, use the OVA image and send via ovfProperties some values such that the [cloud-init within the VCE](https://github.com/iddocohen/vce_cloudinit/) can use it.  
+
+For a more meaningful topology, one could extend this template to add several compute resources and attach those via networking to the `vVCE` - that is not shown here.
+
+In this section I will elaborate the properties of the compute resources and the networks as well.
+
+### Propeties section within resources
+
+
+### Network section within resources
 
 # Resources to keep in mind:
 - [vRA8 Resource Schema](https://code.vmware.com/apis/894/vrealize-automation-resource-type-schema)
