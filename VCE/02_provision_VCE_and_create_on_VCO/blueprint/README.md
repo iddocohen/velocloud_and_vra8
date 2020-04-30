@@ -27,7 +27,7 @@ The below will describe the template and each section of the YAML.
 
 The input section in the "Blueprint" provides the end-user the option to enter values, so the Blueprint can consume those. When the Blueprint gets shared in "Service Broker" under catalog, the end-user using that Blueprint gets a input form onto which he/she is asked to input the values needed for the Blueprint. 
 
-<img src="../screenshots/Service_Broker_Input_Form.png" width="1024">
+<img src="../screenshots/Service_Broker_Input_Form.png" height="640">
 
 Those inputs can also be tested in the "Blueprint" itself when by performing a "Test"
 
@@ -65,7 +65,9 @@ inputs:
 - `description` to provide a help text to the end-user on the input form.
 - `title` to provide a friendly name on the  end-user input form for that variable (provides better user expierence).
 
-In this case, those variables are used to pass towards the VCE to activate against a VCO and create a default root password. In addition, the variable `code` will also be used in "Extensibility", to check if an activation code needs to be generated (if the value is "GENERATE") or use the provided activation code for the VCE. Under the section [Extensibility](../extensibility/) the notation on "how we check this variable" but for now please refer to [Resources](#Resources-Section-in-YAML) to understand "how we use those variables in the Blueprint". 
+In this case, those variables have been created to pass towards the VCE to successfully activate against a VCO and to provison the VCE with a default password. In addition, the variable `code` will also be used in "Extensibility" to check if the activation code needs to be generated (aka, VCE was not created first on the VCO) or use the provided activation code for the VCE. With this ability full automation can be archived, that is, a VCE can be created on compute host and created on VCO at the same time.   
+
+Under the section [Extensibility](../extensibility/) the notation on "how we check the activation code" and "how we get activation code from VCO after creating the VCE in VCO" will be elaborated but for now please refer to [Resources](#Resources-Section-in-YAML) to understand "how we use these variables in the Blueprint and pass those to the VCE itself". 
 
 For more information on how inputs can be customised please refer to [How user input can customize a vRealize Automation Cloud Assembly blueprint
 ](https://docs.vmware.com/en/vRealize-Automation/8.0/Using-and-Managing-Cloud-Assembly/GUID-6BA1DA96-5C20-44BF-9C81-F8132B9B4872.html)
