@@ -12,14 +12,14 @@ In summary the main objectives of this blueprint:
 
 By going to "Cloud Assembly"->"Blueprints"->"Upload", you should be able to upload the ``template.yaml`` with the given name and towards project you defined previously. In my case, I called it "vVCE Blueprint" and upload it to project called "Tests".  
 
-<img src="../screenshots/Blueprint_upload.png" width="1024">  
+<img src="../screenshots/Blueprint_upload.png" width="1024" align="center">  
 
 
 # Overview of the Blueprint
 
 After uploading and opening the blueprint you will see that vRA has constructed a topology based on the definition of the YAML. 
 
-<img src="../screenshots/Blueprint_Overview.png" width="1024">
+<img src="../screenshots/Blueprint_Overview.png" width="1024" align="center">
 
 The below will describe the template and each section of the YAML.
 
@@ -27,11 +27,11 @@ The below will describe the template and each section of the YAML.
 
 The input section in the "Blueprint" provides the end-user the option to enter values, so the Blueprint can consume those. When the Blueprint gets shared in "Service Broker" under catalog, the end-user using that Blueprint gets a input form onto which he/she is asked to input the values needed for the Blueprint. 
 
-<img src="../screenshots/Service_Broker_Input_Form.png" height="640">
+<img src="../screenshots/Service_Broker_Input_Form.png" height="640" align="center">
 
 Those inputs can also be tested in the "Blueprint" itself when by performing a "Test"
 
-<img src="../screenshots/Blueprint_Testing.png" width="1024">
+<img src="../screenshots/Blueprint_Testing.png" width="1024" align="center">
 
 The "Blueprint" can consume those variables because vRA8 creates an object called `input` and associates the variables defined as attributes within that object. Lets consider what I have done, as an example how it works.
 
