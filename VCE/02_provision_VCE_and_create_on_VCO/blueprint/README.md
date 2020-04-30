@@ -22,11 +22,11 @@ The below will describe the template and each section of the YAML..
 
 The input section in the "Blueprint" provides the end-user the option to enter values, so the Blueprint can consume those. When the Blueprint gets shared in "Service Broker" under catalog, the end-user using that Blueprint gets a input form onto which he/she is asked to input the values needed for the Blueprint. 
 
-<img src="../screesnhots/Service_Broker_Input_Form.png">
+<img src="../screenshots/Service_Broker_Input_Form.png">
 
 Those inputs can also be tested in the "Blueprint" itself when by performing a "Test"
 
-<img src="../screesnhots/Blueprint_Testing.png" width="1024">
+<img src="../screenshots/Blueprint_Testing.png" width="1024">
 
 The "Blueprint" can consume those variables because vRA8 creates an object called `input` and associates the variables defined as attributes within that object. Lets consider what I have done for vVCE deployment example. 
 
@@ -54,7 +54,7 @@ inputs:
 ...
 ```
 
-`host, `code` and `password` are variables which I defined in this case, so they can be used later in the template via `${input.host}`, `${input.code}`, `${input.password}` respectively. That can be seen best in [Resources section](# Resources). 
+`host`, `code` and `password` are variables which I defined in this case, so they can be used later in the template via `${input.host}`, `${input.code}`, `${input.password}` respectively. That can be seen best in [Resources section](# Resources). 
 
 ## Resources
 
