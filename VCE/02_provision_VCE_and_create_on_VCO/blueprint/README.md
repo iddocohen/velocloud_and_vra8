@@ -72,13 +72,113 @@ For more information on how inputs can be customised please refer to [How user i
 
 ## Resources Section in YAML
 
-The resource section gives one the possiblity to define the compute resources, the networks they should use and the connections between resources and the defined networks, vRA8 should provision and configure. In this template, I defined a compute resource called `vVCE` which is a `type: Cloud.vSphere.Machine` onto which I will connect 6 interfaces to, use the OVA image and send via ovfProperties some values such that the [cloud-init within the VCE](https://github.com/iddocohen/vce_cloudinit/) can use it.  
+The resource section gives one the possiblity to define the compute resources, the networks they should use and the connections between resources and the defined networks. In this template, I defined a compute resource called `vVCE` which is a `type: Cloud.vSphere.Machine` onto which I will connect 6 interfaces to, use the OVA image and send via ovfProperties some values such that the [cloud-init within the VCE](https://github.com/iddocohen/vce_cloudinit/) can use it.  
 
-For a more meaningful topology, one could extend this template to add several compute resources and attach those via networking to the `vVCE` - that is not shown here.
+For a more meaningful topology, one could extend this template to add several compute resources and attach those via networking to the `vVCE` - that is not shown here but please ping me if you feel this is needed. 
 
-In this section I will elaborate the properties of the compute resources and the networks as well.
+In this section I will elaborate the properties within the section resources. In particular, I will focus on ovfProperties and networks.
 
 ### Propeties section within resources
+
+After defining our resource name (`vVCE`) and tell vRA8 what type it is (`Cloud.vSphere.Machine`), we dive straight into properties the VM should be provisioned with or associated with.
+
+```yml
+    ...
+    properties:
+      cpuCount: 2
+      totalMemoryMB: 4096
+      imageRef: 'http://192.168.2.175/edge-VC_VMDK-x86_64-3.4.0-106-R340-20200218-GA-c57f8316dd-updatable-ext4.ova'
+      ovfProperties:
+        - key: password
+          value: '${input.password}'
+        - key: velocloud.vce.activation_code
+          value: '${input.code}'
+        - key: velocloud.vce.dns1
+          value: 8.8.8.8
+        - key: velocloud.vce.dns2
+          value: 8.8.4.4
+        - key: velocloud.vce.vco
+          value: '${input.host}'
+      networks:
+        - name: '${resource.Cloud_Network_1.name}'
+          network: '${resource.Cloud_Network_1.id}'
+          deviceIndex: 0
+        - name: '${resource.Cloud_Network_2.name}'
+          network: '${resource.Cloud_Network_2.id}'
+          deviceIndex: 1
+        - name: '${resource.Cloud_Network_3.name}'
+          network: '${resource.Cloud_Network_3.id}'
+          deviceIndex: 2
+        - name: '${resource.Cloud_Network_4.name}'
+          network: '${resource.Cloud_Network_4.id}'
+          deviceIndex: 3
+        - name: '${resource.Cloud_Network_5.name}'
+          network: '${resource.Cloud_Network_5.id}'
+          deviceIndex: 4
+        - name: '${resource.Cloud_Network_6.name}'
+          network: '${resource.Cloud_Network_6.id}'
+          deviceIndex: 5
+   ...
+```
+
+#### cpuCount and totalMemoryMB
+
+Lets discuss the first two obvious properties:
+- `cpuCount` which defines how many CPUs the VM should have.
+- `totalMemoryMB` which defines the total RAM in MB the VM should have.
+
+In this template those values are staticaly defined with 2 and 4096 respecitevely; nevertheless, and as shown previously, we could expose those towards the end-user via `${input.variablename}` methodology, for example:
+
+```yml
+    ...
+    inputs:
+      cpu:
+        default: 2
+        type: integer
+        title: CPU
+        description: Number of CPU for VM
+      ram:
+        default: 4096
+        type: integer
+        title: RAM
+        description: How much RAM the VM needs in MB 
+    resources:
+      vVCE:
+        type: Cloud.vSphere.Machine
+        properties:
+          cpuCount: '${input.cpu}'
+          totalMemoryMB: '${input.ram}'
+    ...
+```
+
+#### ImageRef
+
+`imageRef` property is used to tell vRA8 from where to get the OVA image from. In my case, I used a HTTP server location but it could be changed to a local image within vRA8 itself (no HTTP or FTP is needed).
+
+
+#### ovfProperties
+
+Without going into detail about [Open Virtual Machine Format Specification](https://www.vmware.com/pdf/ovf_spec_draft.pdf) and [how we use OVF within cloud-init on our VCE](https://github.com/iddocohen/vce_cloudinit), it is important to note that the following OVF environment support can be found here  [here](https://github.com/iddocohen/vce_cloudinit/blob/master/04_config_with_ovf_properties_via_cloudinit_and_user_data/ovf-env.xml) and be used in `ovfProperties` as key value pairs, to automate configuration within the VCE itself.
+
+Lets have a look onto the OVF properties define in the "Blueprint".
+
+```yml
+    ...
+      ovfProperties:
+        - key: password
+          value: '${input.password}'
+        - key: velocloud.vce.activation_code
+          value: '${input.code}'
+        - key: velocloud.vce.dns1
+          value: 8.8.8.8
+        - key: velocloud.vce.dns2
+          value: 8.8.4.4
+        - key: velocloud.vce.vco
+          value: '${input.host}'
+    ... 
+```
+
+
 
 
 ### Network section within resources
