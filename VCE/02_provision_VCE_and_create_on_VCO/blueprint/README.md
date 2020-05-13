@@ -127,7 +127,7 @@ Lets discuss the first two obvious properties:
 - `cpuCount` which defines how many CPUs the VM should have.
 - `totalMemoryMB` which defines the total RAM in MB the VM should have.
 
-In this template those values are staticaly defined with 2 and 4096 respecitevely; nevertheless, and as shown previously, we could expose those towards the end-user via `${input.variablename}` methodology, for example:
+In this template those values are statically defined with 2 and 4096 respectively; nevertheless, and as shown previously, we could expose those towards the end-user via `${input.variablename}` methodology, for example:
 
 ```yml
     ...
@@ -151,6 +151,8 @@ In this template those values are staticaly defined with 2 and 4096 respecitevel
     ...
 ```
 
+to make it more dynmaic and flexible to use.
+
 #### ImageRef
 
 `imageRef` property is used to tell vRA8 from where to get the OVA image from. In my case, I used a HTTP server location but it could be changed to a local image within vRA8 itself (no HTTP or FTP is needed).
@@ -158,9 +160,9 @@ In this template those values are staticaly defined with 2 and 4096 respecitevel
 
 #### ovfProperties
 
-Without going into detail about [Open Virtual Machine Format Specification](https://www.vmware.com/pdf/ovf_spec_draft.pdf) and [how we use OVF within cloud-init on our VCE](https://github.com/iddocohen/vce_cloudinit), it is important to note that the following OVF environment support can be found here  [here](https://github.com/iddocohen/vce_cloudinit/blob/master/04_config_with_ovf_properties_via_cloudinit_and_user_data/ovf-env.xml) and be used in `ovfProperties` as key value pairs, to automate configuration within the VCE itself.
+Without going into detail about [Open Virtual Machine Format Specification](https://www.vmware.com/pdf/ovf_spec_draft.pdf) and [how we use OVF within cloud-init on our VCE](https://github.com/iddocohen/vce_cloudinit), it is important to note that the following OVF environment support can be found [here](https://github.com/iddocohen/vce_cloudinit/blob/master/04_config_with_ovf_properties_via_cloudinit_and_user_data/ovf-env.xml) and be used in `ovfProperties` as key value pairs in the "Blueprint", to automate configuration within the VCE itself.
 
-Lets have a look onto the OVF properties define in the "Blueprint".
+Looking under the hood, lets look into the snipped related to `ovfProperties`:
 
 ```yml
     ...
@@ -178,7 +180,75 @@ Lets have a look onto the OVF properties define in the "Blueprint".
     ... 
 ```
 
+we can see that the same keys used are within the XML of the [OVF environment file](https://github.com/iddocohen/vce_cloudinit/blob/master/04_config_with_ovf_properties_via_cloudinit_and_user_data/ovf-env.xml) that the VCE support as `oe:key` and `oe:value`. Assuming that `${input.code}`, `${input.host}` and `${input.password}` are left with default values, hence hold `GENERATE`, `vco22-fra1.velocloud.net` and `Velocloud123`, then the OVF environment file would look something like the following:   
 
+```xml
+...
+    <Property oe:key="password" oe:value="Velocloud123"/>
+    <Property oe:key="velocloud.vce.activation_code" oe:value="GENERATE"/>
+    <Property oe:key="velocloud.vce.dns1" oe:value="8.8.8.8"/>
+    <Property oe:key="velocloud.vce.dns2" oe:value="8.8.4.4"/>
+    <Property oe:key="velocloud.vce.vco" oe:value="vco22-fra1.velocloud.net"/>
+...
+```
+
+the key outcome to understand, any `oe:key` and `oe:value` supported via OVF environment properties can be used to send towards the VCE, such that it can configure itself internally with those values. Please use the links above to get more inside on how OVF and cloud-init are related on the VCE.
+
+#### networks
+
+The "networks" section with "resources properties", defines which networks should be attached to what NIC of the VM. 
+
+Lets look what has been defined:
+
+```yml
+...
+      networks:
+        - name: '${resource.Cloud_Network_1.name}'
+          network: '${resource.Cloud_Network_1.id}'
+          deviceIndex: 0
+        - name: '${resource.Cloud_Network_2.name}'
+          network: '${resource.Cloud_Network_2.id}'
+          deviceIndex: 1
+        - name: '${resource.Cloud_Network_3.name}'
+          network: '${resource.Cloud_Network_3.id}'
+          deviceIndex: 2
+        - name: '${resource.Cloud_Network_4.name}'
+          network: '${resource.Cloud_Network_4.id}'
+          deviceIndex: 3
+        - name: '${resource.Cloud_Network_5.name}'
+          network: '${resource.Cloud_Network_5.id}'
+          deviceIndex: 4
+        - name: '${resource.Cloud_Network_6.name}'
+          network: '${resource.Cloud_Network_6.id}'
+          deviceIndex: 5
+...
+```
+
+`deviceIndex` tells vRA8 to associate the network defined under `network` with the NIC at that given "position". That means, and lets take `deviceIndex: 0` as an example, that the interface GE1 (or eth0 in the Linux OS of the VCE) and the first interface on the VCE, will be associated with the `network` defined with the value that attribute `${resource.Cloud_Network_1.id}` holds. The object (`${resource.Cloud_Network_1}`) and its attribute `id` gets generated as soon as we define the [network resource "Cloud_Network_1"](#Network-section-within-resources).
+
+That means a user can go ahead and pick and choose, the network resources he defined to associate those to given NIC respectively. Same network could be associated to the different NICs or subset of network resources could be associated to different NICs. A valid configuration could be:
+
+```yml
+...
+      networks:
+        - name: '${resource.Cloud_Network_2.name}'
+          network: '${resource.Cloud_Network_2.id}'
+          deviceIndex: 1
+        - name: '${resource.Cloud_Network_5.name}'
+          network: '${resource.Cloud_Network_5.id}'
+          deviceIndex: 4
+        - name: '${resource.Cloud_Network_5.name}'
+          network: '${resource.Cloud_Network_5.id}'
+          deviceIndex: 5
+...
+```
+
+Where we would only configure GE2, GE5 and GE6 interfaces of the VCE on the ESXi host and associate `${resource.Cloud_Network_2.id}`. `${resource.Cloud_Network_5.id}` and `${resource.Cloud_Network_5.id}` networks respectively which  GE5 and GE6 would thereby use the same network. 
+
+In our case and in the template, we associate each NIC of the VCE to its own network resource. 
+
+
+*Important:* It is highly recommended to put `deviceIndex` in the above configuration. If one does not define the `deviceIndex`, then vRA8 will associated the networks defined with random NIC on the compute resource which is not deterministic behavior. 
 
 
 ### Network section within resources
