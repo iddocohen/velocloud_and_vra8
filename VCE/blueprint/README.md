@@ -1,3 +1,22 @@
+Table of Contents
+=================
+
+   * [Introduction](#introduction)
+   * [Usage](#usage)
+   * [Pre-requisites](#pre-requisites)
+   * [Overview of the Blueprint](#overview-of-the-blueprint)
+      * [Inputs Section in YAML](#inputs-section-in-yaml)
+      * [Resources Section in YAML](#resources-section-in-yaml)
+         * [Propeties section within resources](#propeties-section-within-resources)
+            * [cpuCount and totalMemoryMB](#cpucount-and-totalmemorymb)
+            * [ImageRef](#imageref)
+            * [ovfProperties](#ovfproperties)
+            * [networks](#networks)
+         * [Network section within resources](#network-section-within-resources)
+   * [Some Thoughts](#some-thoughts)
+      * [Using "cloudConfig" over "ovfProperties"](#using-cloudconfig-over-ovfproperties)
+      * [Use "ovfProperties" and using ${resource} to configure static IPs](#use-ovfproperties-and-using-resource-to-configure-static-ips)
+
 # Introduction
 
 Blueprints represent the most important entity within vRealize Automation – they define how to provision and manage the life cycle of resources in vRealize Automation (aka, infrastructure as a code).In this section, we will go deeper on the different sections of the blueprint and why we configure those for the VCE.
